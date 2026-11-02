@@ -1,0 +1,27 @@
+{
+  "name": "pm-skills",
+  "version": "1.0.0",
+  "description": "Production-grade Product Management and Specification Engineering skills for AI agents.",
+  "keywords": [
+    "agent-skills",
+    "prd",
+    "product-management",
+    "specification",
+    "fintech",
+    "compliance",
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "author": "Sarthak Ganguly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sarthakganguly/pm-skills.git"
+  },
+  "files": [
+    "skills",
+    "README.md",
+    "LICENSE"
+  ]
+}
