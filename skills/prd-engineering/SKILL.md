@@ -2,7 +2,8 @@
 name: prd-engineering
 description: >-
   Produces engineering- and QA-ready Product Requirement Documents (PRDs) with
-  deterministic business logic, state machines, compliance mapping, and a test matrix.
+  deterministic business logic, state machines, compliance mapping, a 5-category QA test matrix,
+  and sprint-ready Agile User Story decomposition.
   Use when creating, drafting, or generating a PRD, Functional Specification Document,
   or feature specification. Use when translating a rough product idea, business
   requirement, or epic into an actionable spec with edge cases, compliance coverage,
@@ -165,11 +166,61 @@ See [QA Matrix Guide](./references/qa-matrix-guide.md) for domain-specific edge 
 - **Phased Rollout:** Feature flag strategy, canary percentages (e.g., 1% → 10% → 50% → 100%), rollback triggers, and kill-switch criteria
 - **Open Questions & Assumptions Log:** Unresolved dependencies with Owner, Due Date, Current Assumption, and Impact if Wrong
 
+#### Section 10: Agile User Story Decomposition *(Standard + Comprehensive tiers)*
+
+Decompose the PRD requirements into sprint-ready, vertical Agile User Stories (`US-xxx`) adhering to the **INVEST** criteria. Every story must cut vertically through system layers to deliver testable end-user or system value.
+
+See [Story Decomposition Guide](./references/story-decomposition-guide.md) for vertical slicing techniques, INVEST heuristics, and anti-patterns.
+
+1. **Executive Story Mapping Table:**
+
+| Story ID | Epic / Module | User Story Title | Traced REQ | Traced QA | Sizing | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `US-101` | Checkout | As a shopper, I want dynamic UPI QR... | `REQ-101` | `QA-101` | 3 pts (M) | None |
+
+2. **Detailed Story Specifications:**
+Format each story cleanly with strict Gherkin acceptance criteria, metadata, and operational notes:
+
+```markdown
+#### US-101: [Imperative Title]
+- **As a** <Persona / Role>
+- **I want to** <Action / Capability>
+- **So that** <Business / User Value>
+
+**Metadata & Traceability:**
+- **Module / Epic:** <Module Name>
+- **Traced Requirements:** `REQ-xxx`
+- **Traced NFRs / Security:** `NFR-xxx`, `SEC-xxx`
+- **Traced QA Tests:** `QA-xxx`
+- **Complexity Sizing:** <Story Points / T-Shirt Size>
+- **Preconditions / Blockers:** <Prerequisite states or stories>
+
+**Acceptance Criteria (Gherkin):**
+```gherkin
+Scenario: [Happy path scenario]
+  Given [precondition]
+  When [action]
+  Then [expected outcome]
+  And [state transition]
+
+Scenario: [Error or timeout scenario]
+  Given [failure condition]
+  When [action occurs]
+  Then [expected error message and compensation action]
+```
+
+**Technical & Operational Notes:**
+- **Feature Flag:** `<flag_name>`
+- **State Transition:** `<FROM_STATE>` ➔ `<TO_STATE>`
+- **Side Effects:** DB mutations, events published, webhooks fired
+```
+
 ### Phase 3: Self-Audit
 
 Before delivering the PRD, verify every item in this checklist passes internally. Do not declare the PRD complete until all applicable criteria are met:
 
-- **Traceability:** Every `REQ-xxx`, `NFR-xxx`, and `SEC-xxx` is referenced by at least one `QA-xxx`
+- **Traceability:** Every `REQ-xxx`, `NFR-xxx`, and `SEC-xxx` is referenced by at least one `QA-xxx` and mapped into at least one `US-xxx` *(Standard + Comprehensive)*
+- **INVEST Stories:** Every story is vertically sliced with explicit Gherkin acceptance criteria
 - **Zero vagueness:** No unquantified adjectives ("fast", "seamless", "robust", "gracefully")
 - **Monetary precision:** All currency fields specify storage format and rounding mode
 - **State completeness:** Every non-terminal state has a timeout, retry policy, and reconciliation path *(Standard + Comprehensive)*
@@ -187,11 +238,15 @@ Before delivering the PRD, verify every item in this checklist passes internally
 | "The diagram alone shows the flow." | Visual diagrams omit guard conditions, DB side effects, and rollback logic. Always pair a Mermaid diagram with the structured state transition table. |
 | "Compliance doesn't apply to this feature." | Validate that claim during discovery. If confirmed, omit the compliance section and note it. Don't silently skip it. |
 | "The PRD is too long already." | Length is a symptom, not a problem. If the PRD is long, the feature is complex. Consider splitting into multiple PRDs using a capability map (see `spec-driven-development` Phase 0). |
+| "Engineering will write their own user stories later." | Deferring user stories produces misalignment and rework. Slicing requirements into INVEST user stories with Gherkin criteria ensures PM, Dev, and QA agree on scope before sprint planning. |
 
 ## Red Flags
 
 - A PRD with a compliance section but no named regulatory body or statute — it's probably boilerplate
 - QA test matrix with only happy-path scenarios — negative, boundary, and concurrency cases are missing
+- Stories sliced horizontally by technical layer (e.g. "build DB", "build API") instead of vertical customer/system value
+- Orphaned user stories that don't trace back to a functional requirement (`REQ-xxx`)
+- User stories with vague acceptance criteria instead of testable Gherkin scenarios
 - No state transition diagram for a feature with more than two states
 - NFRs expressed as adjectives ("high availability", "fast response") instead of numbers
 - `TODO` or `TBD` markers outside the dedicated Open Questions table
@@ -205,12 +260,12 @@ Before delivering the PRD, verify every item in this checklist passes internally
 ## Interaction with Other Skills
 
 - **`interview-me`** — upstream. When the user's intent is still ambiguous, run `interview-me` first to extract confirmed intent. This skill receives that intent and turns it into a structured PRD.
-- **`spec-driven-development`** — sibling. `spec-driven-development` produces lightweight engineering specs (objective, commands, project structure, code style, boundaries). This skill produces heavier PRDs with compliance, state machines, and QA matrices. Use `spec-driven-development` for implementation specs; use this skill for product requirement specs. They can coexist: PRD first (what to build), then engineering spec (how to build it).
+- **`spec-driven-development`** — sibling. `spec-driven-development` produces lightweight engineering specs (objective, commands, project structure, code style, boundaries). This skill produces heavier PRDs with compliance, state machines, QA matrices, and vertical user stories. Use `spec-driven-development` for implementation specs; use this skill for product requirement specs. They can coexist: PRD first (what to build), then engineering spec (how to build it).
 - **`idea-refine`** — upstream. If the concept is still vague and needs divergent exploration before converging on requirements, run `idea-refine` first.
 - **`security-and-hardening`** — downstream. The PRD's compliance and security requirements inform the threat model and hardening work. Don't duplicate `security-and-hardening` content — reference it.
 - **`constraint-driven-development`** — complementary. NFR thresholds defined in the PRD can be recorded as enforceable constraints in `CONSTRAINTS.md`.
 - **`documentation-and-adrs`** — downstream. Architectural decisions made during PRD creation should be captured as ADRs.
-- **`planning-and-task-breakdown`** — downstream. Once the PRD is approved, use this skill to decompose it into implementable tasks.
+- **`planning-and-task-breakdown`** — downstream. Once the PRD and stories are approved, use this skill to decompose stories into sprint tasks and dependency graphs.
 
 ## Verification
 
@@ -219,6 +274,8 @@ After completing the PRD:
 - [ ] PRD tier (Lightweight / Standard / Comprehensive) is stated and justified
 - [ ] Every functional requirement has a unique ID (`REQ-xxx`) and a priority level
 - [ ] Every requirement is referenced by at least one test case (`QA-xxx`)
+- [ ] Every requirement is decomposed into at least one INVEST-compliant user story (`US-xxx`) with Gherkin acceptance criteria (Standard + Comprehensive)
+- [ ] Stories are sliced vertically (delivering end-to-end functionality), not horizontally by technical layer
 - [ ] No unquantified adjectives exist anywhere in the document
 - [ ] Monetary fields specify storage format and rounding mode (if applicable)
 - [ ] Every non-terminal state has a timeout transition, retry policy, and reconciliation path (Standard + Comprehensive)
