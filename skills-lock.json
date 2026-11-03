@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "prd-engineering": {
+      "source": "/home/sarthakganguly/pm-skills",
+      "sourceType": "local",
+      "computedHash": "844a6e533b61fea267fbba1c932aefa262c4ee6eca8d35250b5e8167802ea7f7"
+    }
+  }
+}
