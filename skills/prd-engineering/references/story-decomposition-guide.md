@@ -96,6 +96,12 @@ Scenario: [Title of scenario]
 - **Feature Flag:** `<flag_name>`
 - **State Transition:** `<FROM_STATE>` ➔ `<TO_STATE>`
 - **Side Effects:** DB ledger record, notification dispatch, webhook callback
+
+**Definition of Done (Optional — only when confirmed with user):**
+- [ ] Automated tests pass with required coverage threshold
+- [ ] Telemetry & trace IDs emitted in application logs
+- [ ] Zero unmasked PII in logs or error bodies
+- [ ] Feature flag tested enabled and disabled
 ```
 
 ---
@@ -191,6 +197,17 @@ h3. Technical Notes
 * *Feature Flag:* checkout_upi_dynamic_qr_v1
 ```
 
+#### 4. Optional Jira Bulk Import CSV (`docs/backlog-jira.csv`):
+When the user asks for CSV import support, generate a companion CSV file that matches Jira's native Bulk Issue Importer format:
+
+```csv
+Issue Type,Summary,Description,Parent,Components,Labels,Story Points,Acceptance Criteria
+Epic,"Checkout & Payment Processing","Epic for managing checkout flows and QR generation.",,"Payments, Checkout","checkout, epic",,
+Story,"[US-101] Dynamic UPI QR Code Generation","As a Registered Shopper I want to view a dynamic UPI QR code with pre-filled amount during checkout so that I can scan and complete my payment without manual entry.","Checkout & Payment Processing","Payments, Checkout","upi-autopay, fintech",3,"Scenario: Successful QR generation\nGiven the shopper has a cart with payable amount ₹1,250.00\nWhen the shopper selects 'Pay via UPI QR'\nThen the system displays the dynamic UPI QR within 500ms"
+```
+
+*Note: Generating this CSV is completely optional. Users can opt for Jira markdown/markup only.*
+
 ---
 
 ### B. GitLab Tool Gate
@@ -253,3 +270,28 @@ Ask the user:
 
 #### 2. Companion Output Template (`docs/backlog-[tool].md`):
 Format with clean standard markdown tasklists, metadata badges, and explicit parent/child relationships compatible with the chosen tool's import or copy-paste workflow.
+
+---
+
+## 6. The Interactive Definition of Done (DoD) Gate
+
+> [!IMPORTANT]
+> **Never embed a Definition of Done checklist silently.**
+> A Definition of Done (DoD) sets the team's shared quality bar across development, testing, and operations. Because every engineering organization has different CI/CD requirements, coverage targets, and regulatory standards, the DoD must be presented to the user during discovery for confirmation or customization.
+
+### The Interactive Prompt
+During Phase 1 discovery, if the user opts for a Definition of Done, present this baseline checklist for review:
+
+> *"Here is the proposed Definition of Done checklist for your stories:*
+> - *[ ] Unit and integration tests pass with ≥80% code coverage*
+> - *[ ] All acceptance criteria (Gherkin scenarios) verified in test environment*
+> - *[ ] Required observability tags (`trace_id`, `span_id`, error codes) emitted in logs*
+> - *[ ] Zero unmasked PII (card PAN, Aadhaar, CVV, passwords) in application logs or APM*
+> - *[ ] Feature flag behavior verified in both enabled and disabled states*
+> - *[ ] API contracts / schemas updated and backward-compatible*
+>
+> *Would you like to keep these standard quality gates, customize any items, or omit DoD?"*
+
+### Embedding Rules
+1. **If confirmed or customized:** Embed the approved checklist either as a global Section 10.3 sub-block in the PRD, or inside each story specification block in the companion backlog file.
+2. **If omitted:** Do not include a DoD checklist in the stories or PRD.

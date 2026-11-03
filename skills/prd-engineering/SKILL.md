@@ -64,9 +64,13 @@ Before batching questions, form a hypothesis about what the user needs (borrow t
    - **Mode A (PRD Only):** Pure requirement specification without story decomposition.
    - **Mode B (Standard Stories):** Include Section 10 with clean, tool-agnostic INVEST user stories in Markdown.
    - **Mode C (With Tool Gate):** Include Section 10 AND generate a dedicated companion backlog file (`docs/backlog-[tool].md`) tailored for direct import or copy-paste into their project management tool:
-     - **If Jira:** Ask whether using **Jira Cloud** (Standard Markdown) or **Jira Data Center** (Wiki Markup); ask for Parent Epic name/key, Components, and Labels.
+     - **If Jira:** Ask whether using **Jira Cloud** (Standard Markdown) or **Jira Data Center** (Wiki Markup); ask for Parent Epic name/key, Components, and Labels; and ask whether they want **Jira Markdown/Markup only** or also want an **optional Jira CSV import table** (`docs/backlog-jira.csv`).
      - **If GitLab:** Ask for Region label value (default `region::`), confirm Workflow Status (`workflow::grooming`, `triage::pending`), Work Item Type (`type::enhancement` or `type::customisation`), and Parent Group Epic. Embed GitLab Quick Actions (`/label`, `/epic`, `/weight`).
      - **If Other Tool (Linear, GitHub, etc.):** Ask for any specific tags, labels, or milestone metadata to embed.
+6. **Definition of Done (DoD) Checklist (Optional):** Ask if the user wants an optional Definition of Done (DoD) checklist included. If yes, **show the proposed baseline DoD checklist to the user first for review/customization** before adding it to the PRD or stories:
+   - Propose standard quality gates: unit test coverage threshold, integration test pass, telemetry/trace IDs emitted, zero PII in logs, feature flag verified off/on.
+   - Explicitly ask: *"Here is the proposed Definition of Done checklist. Would you like to keep these, customize them, or omit DoD?"*
+   - Never embed a DoD checklist without first presenting it to the user.
 
 Stop when you can predict the user's answer to the next question you would ask. If after 6 questions you still can't, step back and ask whether something foundational is missing.
 
@@ -220,11 +224,18 @@ Scenario: [Error or timeout scenario]
 - **Feature Flag:** `<flag_name>`
 - **State Transition:** `<FROM_STATE>` ➔ `<TO_STATE>`
 - **Side Effects:** DB mutations, events published, webhooks fired
+
+**Definition of Done (Optional — only when confirmed with user):**
+- [ ] Unit & integration tests pass with stated coverage threshold
+- [ ] Observability fields (`trace_id`, error codes) emitted
+- [ ] Zero unmasked PII in application logs
+- [ ] Feature flag tested enabled and disabled
 ```
 
 3. **Tool Gate Output (When Mode C is Selected):**
 When the user requests tool integration, generate a companion backlog file alongside the PRD:
 - **`docs/backlog-jira.md`:** Formatted with Parent Epic hierarchy, Jira Components, and Labels. Rendered in Markdown (for Jira Cloud) or Wiki Markup (for Jira Data Center) as confirmed during discovery.
+- **`docs/backlog-jira.csv` (Optional):** When requested, generates a ready-to-import CSV file containing: `Issue Type,Summary,Description,Parent,Components,Labels,Story Points,Acceptance Criteria` for instant Jira Bulk Import.
 - **`docs/backlog-gitlab.md`:** Formatted with Group Epic parent link and executable **GitLab Quick Actions** (`/epic`, `/weight`, `/label ~"region::..." ~"workflow::grooming" ~"type::enhancement"`).
 - **`docs/backlog-[tool].md`:** Formatted with the user's custom tags, milestones, and work item hierarchy.
 
@@ -234,6 +245,7 @@ Before delivering the PRD, verify every item in this checklist passes internally
 
 - **Traceability:** Every `REQ-xxx`, `NFR-xxx`, and `SEC-xxx` is referenced by at least one `QA-xxx` and mapped into at least one `US-xxx` *(Standard + Comprehensive)*
 - **INVEST Stories:** Every story is vertically sliced with explicit Gherkin acceptance criteria
+- **Interactive DoD Confirmation:** If DoD was included, the proposed checklist was displayed and confirmed by the user first
 - **Zero vagueness:** No unquantified adjectives ("fast", "seamless", "robust", "gracefully")
 - **Monetary precision:** All currency fields specify storage format and rounding mode
 - **State completeness:** Every non-terminal state has a timeout, retry policy, and reconciliation path *(Standard + Comprehensive)*
@@ -289,7 +301,8 @@ After completing the PRD:
 - [ ] Every requirement is referenced by at least one test case (`QA-xxx`)
 - [ ] Every requirement is decomposed into at least one INVEST-compliant user story (`US-xxx`) with Gherkin acceptance criteria (Standard + Comprehensive)
 - [ ] Stories are sliced vertically (delivering end-to-end functionality), not horizontally by technical layer
-- [ ] If Tool Gate was requested, companion backlog file (`docs/backlog-[tool].md`) is generated with verified parent/child hierarchy and tool-specific markup/actions (Jira Cloud Markdown vs DC Wiki markup; GitLab Quick Actions & scoped labels)
+- [ ] If Definition of Done (DoD) was requested, the proposed checklist was displayed and confirmed by the user before inclusion
+- [ ] If Tool Gate was requested, companion backlog file (`docs/backlog-[tool].md`) is generated with verified parent/child hierarchy and tool-specific markup/actions (Jira Cloud Markdown vs DC Wiki markup; GitLab Quick Actions & scoped labels; optional Jira CSV table if selected)
 - [ ] No unquantified adjectives exist anywhere in the document
 - [ ] Monetary fields specify storage format and rounding mode (if applicable)
 - [ ] Every non-terminal state has a timeout transition, retry policy, and reconciliation path (Standard + Comprehensive)
