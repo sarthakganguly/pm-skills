@@ -60,6 +60,13 @@ Before batching questions, form a hypothesis about what the user needs (borrow t
 2. **Regulatory domain:** What compliance regime applies? (e.g., Indian Fintech, US Healthcare/HIPAA, EU/GDPR, none). Don't assume — ask.
 3. **Scale & SLA targets:** Are there specific throughput (TPS/RPM), latency (p95/p99), availability, or disaster recovery constraints?
 4. **Technical depth:** Should this PRD include API schemas and/or data models, or will those live in a separate TDD?
+5. **Story Decomposition & Tool Gate (Optional):** Ask the user which output mode they prefer:
+   - **Mode A (PRD Only):** Pure requirement specification without story decomposition.
+   - **Mode B (Standard Stories):** Include Section 10 with clean, tool-agnostic INVEST user stories in Markdown.
+   - **Mode C (With Tool Gate):** Include Section 10 AND generate a dedicated companion backlog file (`docs/backlog-[tool].md`) tailored for direct import or copy-paste into their project management tool:
+     - **If Jira:** Ask whether using **Jira Cloud** (Standard Markdown) or **Jira Data Center** (Wiki Markup); ask for Parent Epic name/key, Components, and Labels.
+     - **If GitLab:** Ask for Region label value (default `region::`), confirm Workflow Status (`workflow::grooming`, `triage::pending`), Work Item Type (`type::enhancement` or `type::customisation`), and Parent Group Epic. Embed GitLab Quick Actions (`/label`, `/epic`, `/weight`).
+     - **If Other Tool (Linear, GitHub, etc.):** Ask for any specific tags, labels, or milestone metadata to embed.
 
 Stop when you can predict the user's answer to the next question you would ask. If after 6 questions you still can't, step back and ask whether something foundational is missing.
 
@@ -215,6 +222,12 @@ Scenario: [Error or timeout scenario]
 - **Side Effects:** DB mutations, events published, webhooks fired
 ```
 
+3. **Tool Gate Output (When Mode C is Selected):**
+When the user requests tool integration, generate a companion backlog file alongside the PRD:
+- **`docs/backlog-jira.md`:** Formatted with Parent Epic hierarchy, Jira Components, and Labels. Rendered in Markdown (for Jira Cloud) or Wiki Markup (for Jira Data Center) as confirmed during discovery.
+- **`docs/backlog-gitlab.md`:** Formatted with Group Epic parent link and executable **GitLab Quick Actions** (`/epic`, `/weight`, `/label ~"region::..." ~"workflow::grooming" ~"type::enhancement"`).
+- **`docs/backlog-[tool].md`:** Formatted with the user's custom tags, milestones, and work item hierarchy.
+
 ### Phase 3: Self-Audit
 
 Before delivering the PRD, verify every item in this checklist passes internally. Do not declare the PRD complete until all applicable criteria are met:
@@ -276,6 +289,7 @@ After completing the PRD:
 - [ ] Every requirement is referenced by at least one test case (`QA-xxx`)
 - [ ] Every requirement is decomposed into at least one INVEST-compliant user story (`US-xxx`) with Gherkin acceptance criteria (Standard + Comprehensive)
 - [ ] Stories are sliced vertically (delivering end-to-end functionality), not horizontally by technical layer
+- [ ] If Tool Gate was requested, companion backlog file (`docs/backlog-[tool].md`) is generated with verified parent/child hierarchy and tool-specific markup/actions (Jira Cloud Markdown vs DC Wiki markup; GitLab Quick Actions & scoped labels)
 - [ ] No unquantified adjectives exist anywhere in the document
 - [ ] Monetary fields specify storage format and rounding mode (if applicable)
 - [ ] Every non-terminal state has a timeout transition, retry policy, and reconciliation path (Standard + Comprehensive)

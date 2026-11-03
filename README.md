@@ -16,6 +16,11 @@ Production-grade Product Management & Specification Engineering skills for AI co
 * **Pluggable Compliance Modules:** Indian Fintech (RBI Digital Lending Directions 2025, PA Directions 2025, DPDP Act/Rules 2025, CERT-In 2022, UIDAI ADV), extensible to US/EU domains.
 * **5-Category QA Matrix:** Positive, Negative, Boundary, Concurrency/Idempotency, and Security/Compliance test cases.
 * **Agile Story Decomposition:** INVEST-compliant vertical slicing with Gherkin acceptance criteria (`Given/When/Then`) and tool-gate ready metadata.
+* **Optional Tool Gate & Companion Backlogs:** Decomposes epics into parent/child hierarchies and outputs ready-to-import companion markdown files (`docs/backlog-[tool].md`):
+  * **Jira (Cloud & Data Center):** Handles Parent Epic linking, Jira Components, and Labels, outputting Markdown (Cloud) or Wiki Markup (Data Center).
+  * **GitLab:** Emits Group Epics and Project Issues formatted with scoped labels (`region::*`, `workflow::grooming`, `type::enhancement`) and executable **GitLab Quick Actions** (`/epic`, `/label`, `/weight`).
+  * **Other Tools:** Custom metadata, tags, and milestones for Linear, GitHub Issues, etc.
+  * **Flexible Output Modes:** Choose PRD-only, clean Markdown stories, or stories with tool-specific formatting.
 
 ---
 
