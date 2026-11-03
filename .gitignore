@@ -15,3 +15,5 @@ Thumbs.db
 # Temporary & Build files
 *.tmp
 *.log
+
+docs/
